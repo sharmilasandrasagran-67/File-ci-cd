@@ -1,9 +1,12 @@
 import pandas as pd
 
 def test_duplicates_removed():
+
+    # Load processed dataset
     df = pd.read_csv("data/processed_dataset.csv")
 
-    # Check for duplicate rows
-    duplicates = df.duplicated().sum()
+    # Count duplicate rows
+    duplicate_count = df.duplicated().sum()
 
-    assert duplicates == 0
+    # Test should pass if duplicates = 0
+    assert duplicate_count == 0
