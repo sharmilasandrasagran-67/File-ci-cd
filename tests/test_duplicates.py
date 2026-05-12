@@ -1,5 +1,3 @@
-import pandas as pd
-
 import pytest
 from scripts.duplicates import remove_duplicates
 
@@ -22,4 +20,4 @@ def test_remove_duplicates_all_duplicates():
     data = [5, 5, 5, 5]
     result = remove_duplicates(data)
     assert result == [5]
-
+    
