@@ -7,8 +7,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout repo
+    # Step 1: Checkout repo with full history so we can push back
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     # Step 2: Set up Python
     - name: Set up Python
@@ -40,9 +42,11 @@ jobs:
     - name: Run deduplication script
       run: python scripts/remove_duplicates.py
 
-    # Step 7: Upload processed dataset as artifact (v4)
-    - name: Upload processed dataset
-      uses: actions/upload-artifact@v4
-      with:
-        name: processed-dataset
-        path: data/processed_dataset.csv
+    # Step 7: Commit updated processed dataset back to repo
+    - name: Commit updated processed dataset
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add data/processed_dataset.csv
+        git commit -m "Update processed_dataset.csv via CI" || echo "No changes to commit"
+        git push
