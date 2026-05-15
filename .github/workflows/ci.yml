@@ -30,4 +30,12 @@ jobs:
     - name: Run tests
       run: |
         PYTHONPATH=. pytest
-        
+
+    - name: Run deduplication script
+      run: python scripts/remove_duplicates.py
+
+    - name: Upload processed dataset
+      uses: actions/upload-artifact@v3
+      with:
+        name: processed-dataset
+        path: data/processed_dataset.csv
