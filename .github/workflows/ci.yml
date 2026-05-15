@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]   # Only run on pushes to main
   pull_request:
-    branches: [main]   # Still run tests on PRs, but no commit step
+    branches: [main]   # Run tests on PRs, but no commit step
 
 jobs:
   build:
