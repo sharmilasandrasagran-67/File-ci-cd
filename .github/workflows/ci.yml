@@ -1,10 +1,16 @@
 name: Python CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]   # Only run on pushes to main
+  pull_request:
+    branches: [main]   # Still run tests on PRs, but no commit step
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # Opt into Node.js 24 now
 
     steps:
     # Step 1: Checkout repo with full history so we can push back
@@ -42,8 +48,9 @@ jobs:
     - name: Run deduplication script
       run: python scripts/remove_duplicates.py
 
-    # Step 7: Commit updated processed dataset back to repo
+    # Step 7: Commit updated processed dataset back to repo (only on push to main)
     - name: Commit updated processed dataset
+      if: github.event_name == 'push'   # Prevents commits on PR runs
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
