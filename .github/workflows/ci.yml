@@ -1,30 +1,46 @@
-name: CI
+name: Python CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+    # Step 1: Checkout repo
+    - uses: actions/checkout@v3
 
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.11"
+        python-version: '3.10'
 
+    # Step 3: Cache pip dependencies
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Step 4: Install dependencies
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
+    # Step 5: Run tests
+    - name: Run tests
+      run: |
+        PYTHONPATH=. pytest
+
+    # Step 6: Run deduplication script
     - name: Run deduplication script
       run: python scripts/remove_duplicates.py
 
+    # Step 7: Upload processed dataset as artifact
     - name: Upload processed dataset
       uses: actions/upload-artifact@v3
       with:
